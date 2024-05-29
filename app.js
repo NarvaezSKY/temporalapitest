@@ -7,7 +7,7 @@ import { FRONTEND_URL } from "./config/config.js";
 const app = Express();
 
 const corsOptions = {
-  origin: FRONTEND_URL,
+  origin: "*",
 };
 
 app.use(Express.json());
