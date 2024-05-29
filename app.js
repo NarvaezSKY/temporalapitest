@@ -8,8 +8,6 @@ const app = Express();
 
 const corsOptions = {
   origin: FRONTEND_URL,
-  credentials: true,
-  optionsSuccessStatus: 200,
 };
 
 app.use(Express.json());
