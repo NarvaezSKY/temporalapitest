@@ -1,35 +1,111 @@
-import User from '../models/user.model.js'
+import User from "../models/user.model.js";
+import { createAccesToken } from "./../libs/jwt.js";
 
 export const getAllUsers = async (req, res) => {
-    try {
-        const users = await User.find();
-        res.status(200).json(users);
-    } catch (error) {
-        res.status(404).json({ message: error.message });
-    }
-}
+  try {
+    const users = await User.find();
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
 
-export const createUser = async (req, res) => {
-    const user = req.body;
-    try {
-        const newUser = await new User({
-            name: user.name,
-            username: user.username,
-            image: user.image
-        }).save();
-        res.status(200).json(newUser);
-    } catch (error) {
-        res.status(409).json({ message: error.message });
+export const register = async (req, res) => {
+  const { name, lastName, username, email, password, image } = req.body;
+
+  try {
+    const existingUser = await User.findOne({ email });
+    const existingUsername = await User.findOne({ username });
+
+    if (existingUser) {
+      return res.status(409).json({ message: "User already exists" });
     }
-}
+
+    if (existingUsername) {
+      return res.status(409).json({ message: "Username already exists" });
+    }
+
+    if (!image) image="https://t3.ftcdn.net/jpg/05/53/79/60/360_F_553796090_XHrE6R9jwmBJUMo9HKl41hyHJ5gqt9oz.jpg"
+
+    const newUser = await new User({
+      name,
+      lastName,
+      username,
+      email,
+      password,
+      image,
+    }).save();
+
+    res.status(200).json(newUser);
+  } catch (error) {
+    res.status(409).json({ message: error.message });
+  }
+};
+
+export const login = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    if (user.password !== password) {
+      return res.status(401).json({ message: "Invalid credentials" });
+    }
+    const payload = {
+      id: user._id,
+      email: user.email,
+      username: user.username,
+    };
+    const token = await createAccesToken(payload);
+    res.cookie("token", token);
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
 
 export const deleteUser = async (req, res) => {
-    const id = req.params.id;
-    try {
-        if (!id) return res.status(404).json({ message: "User not found" });
-        await User.findByIdAndDelete({ _id: id });
-        res.status(200).json({ message: "User deleted successfully" });
-    } catch (error) {
-        res.status(404).json({ message: error.message });
-    }
-}
+  const id = req.params.id;
+  try {
+    if (!id) return res.status(404).json({ message: "User not found" });
+    await User.findByIdAndDelete({ _id: id });
+    res.status(200).json({ message: "User deleted successfully" });
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+};
+
+export const verifyToken = async (req, res, next) => {
+  const token = req.headers.authorization;
+  if (!token) {
+    return res.status(401).json({ message: "No token provided" });
+  }
+  try {
+    const decoded = jwt.verify(token, TOKEN_SECRET);
+    req.user = decoded;
+    next();
+  } catch (error) {
+    res.status(401).json({ message: "Invalid token" });
+  }
+};
+
+export const profile = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(404).json({ error });
+  }
+};
+
+export const getSingleUser = async (req, res) => {
+  const id = req.params.id;
+  try {
+    const user = await User.findById(id);
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(404).json({ error });
+  }
+};

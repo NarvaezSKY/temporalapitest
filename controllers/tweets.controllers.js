@@ -1,4 +1,6 @@
+import { text } from "express";
 import Tweets from "../models/tweets.model.js";
+import User from "../models/user.model.js";
 
 export const getAllTweets = async (req, res) => {
   try {
@@ -14,14 +16,20 @@ export const createTweet = async (req, res) => {
 
   try {
     const newTweet = await new Tweets({
-      authorProfilePhoto: tweet.authorProfilePhoto,
-      authorName: tweet.authorName,
-      authorUserName: tweet.authorUserName,
       text: tweet.text,
       images: tweet.images,
+      type: tweet.type,
+      user: req.user.id,
     }).save();
-
-    res.status(200).json(newTweet);
+    const foundUser = await User.findById(req.user.id);
+    res.status(200).json({
+      text: newTweet.text,
+      images: newTweet.images,
+      type: newTweet.type,
+      userName: foundUser.username,
+      userUsername: foundUser.username,
+      userImage: foundUser.image,
+    });
   } catch (error) {
     res.status(409).json({ message: error.message });
   }
