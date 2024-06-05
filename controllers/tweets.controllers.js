@@ -3,7 +3,7 @@ import User from "../models/user.model.js";
 
 export const getAllTweets = async (req, res) => {
   try {
-    const tweets = await Tweets.find();
+    const tweets = await Tweets.find().populate("user", "name username image");
     res.status(200).json(tweets);
   } catch (error) {
     res.status(404).json({ message: error.message });
@@ -20,7 +20,9 @@ export const createTweet = async (req, res) => {
       type: tweet.type,
       user: req.user.id,
     }).save();
+
     const foundUser = await User.findById(req.user.id);
+    
     res.status(200).json({
       text: newTweet.text,
       images: newTweet.images,
@@ -45,3 +47,40 @@ export const deleteTweet = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 };
+
+export const getUserTweets = async (req, res) => {
+  try {
+    const tweets = await Tweets.find({ user: req.params.id }).populate(
+      "user",
+      "name username image"
+    );
+    res.status(200).json(tweets);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+}
+
+export const getUserMedia = async (req, res) => {
+  try {
+    const tweets = await Tweets.find({ user: req.params.id, type: "media" }).populate(
+      "user",
+      "name username image"
+    );
+    res.status(200).json(tweets);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+}
+
+export const  getUserEvents = async (req, res) => {
+  try {
+    const tweets = await Tweets.find({ user: req.params.id, type: "event" }).populate(
+      "user",
+      "name username image"
+    );
+    res.status(200).json(tweets);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+}
+    
