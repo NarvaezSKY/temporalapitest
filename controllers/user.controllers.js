@@ -11,7 +11,7 @@ export const getAllUsers = async (req, res) => {
 };
 
 export const register = async (req, res) => {
-  const { name, lastName, username, email, password, image } = req.body;
+  const { name, lastName, username, email, password, image: imageFromBody } = req.body;
 
   try {
     const existingUser = await User.findOne({ email });
@@ -25,22 +25,28 @@ export const register = async (req, res) => {
       return res.status(409).json({ message: "Username already exists" });
     }
 
-    if (!image) image="https://t3.ftcdn.net/jpg/05/53/79/60/360_F_553796090_XHrE6R9jwmBJUMo9HKl41hyHJ5gqt9oz.jpg"
+    let image = imageFromBody;
+    if (!image) {
+      image = "https://t3.ftcdn.net/jpg/05/53/79/60/360_F_553796090_XHrE6R9jwmBJUMo9HKl41hyHJ5gqt9oz.jpg";
+    }
 
-    const newUser = await new User({
+    const newUser = new User({
       name,
       lastName,
       username,
       email,
       password,
       image,
-    }).save();
+    });
+
+    await newUser.save();
 
     res.status(200).json(newUser);
   } catch (error) {
     res.status(409).json({ message: error.message });
   }
 };
+
 
 export const login = async (req, res) => {
   const { email, password } = req.body;
@@ -60,7 +66,15 @@ export const login = async (req, res) => {
     const token = await createAccesToken(payload);
     res.cookie("token", token);
 
-    res.status(200).json(user);
+    res.status(200).json({
+      id: user._id,
+      name: user.name,
+      lastName: user.lastName,
+      username: user.username,
+      email: user.email,
+      image: user.image,
+      token: token,
+    });
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
