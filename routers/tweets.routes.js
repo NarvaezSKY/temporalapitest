@@ -8,7 +8,7 @@ import { AuthRequired } from "../middlewares/validateToken.js";
 
 const router = Router();
 
-router.get("/tweets", AuthRequired, getAllTweets);
+router.get("/tweets",  getAllTweets);
 router.post("/tweets", AuthRequired, createTweet);
 router.delete("/:id", AuthRequired, deleteTweet);
 
