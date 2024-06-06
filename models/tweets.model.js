@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-const Tweets = new Schema(
+const TweetSchema = new Schema(
   {
     text: {
       type: String,
@@ -19,4 +19,7 @@ const Tweets = new Schema(
   },
   { timestamps: true }
 );
-export default mongoose.model("Tweets", Tweets);
+
+const Tweet = mongoose.model("Tweet", TweetSchema);
+
+export default Tweet;

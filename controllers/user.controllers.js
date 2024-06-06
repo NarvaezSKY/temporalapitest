@@ -1,5 +1,7 @@
 import User from "../models/user.model.js";
 import { createAccesToken } from "./../libs/jwt.js";
+import Tweets from '../models/tweets.model.js';
+import mongoose from "mongoose";
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -114,12 +116,37 @@ export const profile = async (req, res) => {
   }
 };
 
+
 export const getSingleUser = async (req, res) => {
   const id = req.params.id;
   try {
     const user = await User.findById(id);
-    res.status(200).json(user);
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Obtenemos los tweets del usuario
+    const tweets = await Tweets.find({ user: id });
+
+    // Construimos la respuesta
+    const response = {
+      _id: user._id,
+      name: user.name,
+      lastName: user.lastName,
+      username: user.username,
+      email: user.email,
+      password: user.password,
+      image: user.image,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      __v: user.__v,
+      // Agregamos la propiedad 'tweets' al final
+      tweets: tweets || [],
+    };
+
+    res.status(200).json(response);
   } catch (error) {
-    res.status(404).json({ error });
+    res.status(404).json({ error: error.message });
   }
 };
