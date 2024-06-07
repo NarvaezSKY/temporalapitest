@@ -7,7 +7,7 @@ import userRouter from "./routers/user.routes.js";
 const app = Express();
 
 const corsOptions = {
-  origin: ["http://localhost:5173", "https://test-sena-book-git-ft-2335-senathreads.vercel.app"],
+  origin: ["http://localhost:5173","https://test-sena-book-git-ft-2335-senathreads.vercel.app"],
   optionsSuccessStatus: 200,
   credentials: true,
 };
