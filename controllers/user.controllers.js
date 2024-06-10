@@ -126,8 +126,8 @@ export const getSingleUser = async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Obtenemos los tweets del usuario
-    const tweets = await Tweets.find({ user: id });
+    // Obtenemos los tweets del usuario y poblamos la información del usuario
+    const tweets = await Tweets.find({ user: id }).populate("user", "name username image");
 
     // Construimos la respuesta
     const response = {
@@ -141,7 +141,7 @@ export const getSingleUser = async (req, res) => {
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
       __v: user.__v,
-      // Agregamos la propiedad 'tweets' al final
+      // Agregamos la propiedad 'tweets' al final con la información del usuario poblada
       tweets: tweets || [],
     };
 
