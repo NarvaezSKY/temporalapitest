@@ -3,6 +3,7 @@ import morgan from "morgan";
 import cors from "cors";
 import tweetsRouter from "./routers/tweets.routes.js";
 import userRouter from "./routers/user.routes.js";
+import eventsRouter from "./routers/events.routes.js";
 
 const app = Express();
 
@@ -18,5 +19,6 @@ app.use(cors(corsOptions));
 
 app.use("/api", tweetsRouter);
 app.use("/api", userRouter);
+app.use("/api", eventsRouter);
 
 export default app;

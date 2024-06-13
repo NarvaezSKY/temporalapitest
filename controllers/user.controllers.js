@@ -1,7 +1,6 @@
 import User from "../models/user.model.js";
 import { createAccesToken } from "./../libs/jwt.js";
 import Tweets from '../models/tweets.model.js';
-import mongoose from "mongoose";
 
 export const getAllUsers = async (req, res) => {
   try {
@@ -116,7 +115,6 @@ export const profile = async (req, res) => {
   }
 };
 
-
 export const getSingleUser = async (req, res) => {
   const id = req.params.id;
   try {
@@ -125,11 +123,8 @@ export const getSingleUser = async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: 'User not found' });
     }
-
-    // Obtenemos los tweets del usuario y poblamos la información del usuario
     const tweets = await Tweets.find({ user: id }).populate("user", "name username image");
 
-    // Construimos la respuesta
     const response = {
       _id: user._id,
       name: user.name,
@@ -141,10 +136,8 @@ export const getSingleUser = async (req, res) => {
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
       __v: user.__v,
-      // Agregamos la propiedad 'tweets' al final con la información del usuario poblada
       tweets: tweets || [],
     };
-
     res.status(200).json(response);
   } catch (error) {
     res.status(404).json({ error: error.message });

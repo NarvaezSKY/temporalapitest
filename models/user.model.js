@@ -22,6 +22,10 @@ const UserSchema = new mongoose.Schema({
   tweets: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Tweet'
+  }],
+  events: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Events'
   }]
 }, { timestamps: true });
 
