@@ -143,3 +143,34 @@ export const getSingleUser = async (req, res) => {
     res.status(404).json({ error: error.message });
   }
 };
+
+export const getSingleUserByUsername = async (req, res) => {
+  const username = req.params.username;
+  try {
+    const user = await User.findOne({ username });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const tweets = await Tweets.find({ user: user._id }).populate("user", "name username image");
+
+    const response = {
+      _id: user._id,
+      name: user.name,
+      lastName: user.lastName,
+      username: user.username,
+      email: user.email,
+      password: user.password,
+      image: user.image,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+      __v: user.__v,
+      tweets: tweets || [],
+    };
+    
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
