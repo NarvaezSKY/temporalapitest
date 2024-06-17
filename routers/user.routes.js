@@ -7,7 +7,8 @@ import {
   verifyToken,
   profile,
   getSingleUser,
-  getSingleUserByUsername
+  getSingleUserByUsername,
+  searchUsersByUsername
 } from "../controllers/user.controllers.js";
 import { AuthRequired } from "../middlewares/validateToken.js";
 
@@ -21,5 +22,6 @@ router.post ("/users/verifyToken", AuthRequired, verifyToken);
 router.get('/users/profile', AuthRequired, profile);
 router.get('/users/:id', AuthRequired, getSingleUser);
 router.get('/users/username/:username', AuthRequired, getSingleUserByUsername);
+router.get('/users/search/:username', AuthRequired, searchUsersByUsername);
 
 export default router;
