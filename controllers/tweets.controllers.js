@@ -83,4 +83,15 @@ export const  getUserEvents = async (req, res) => {
     res.status(404).json({ message: error.message });
   }
 }
-    
+
+export const getSigleTweet = async (req, res) => {
+  try {
+    const tweet = await Tweets.findById(req.params.id).populate(
+      "user",
+      "name username image"
+    );
+    res.status(200).json(tweet);
+  } catch (error) {
+    res.status(404).json({ message: error.message });
+  }
+}

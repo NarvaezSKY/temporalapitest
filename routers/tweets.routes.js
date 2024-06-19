@@ -4,7 +4,8 @@ import {
   deleteTweet,
   getUserTweets,
   getUserEvents,
-  getUserMedia
+  getUserMedia,
+  getSigleTweet
 } from "../controllers/tweets.controllers.js";
 import { Router } from "express";
 import { AuthRequired } from "../middlewares/validateToken.js";
@@ -17,5 +18,6 @@ router.delete("/:id", AuthRequired, deleteTweet);
 router.get("/tweets/:id", AuthRequired, getUserTweets);
 router.get("/tweets/events/:id", AuthRequired, getUserEvents);
 router.get("/tweets/media/:id", AuthRequired, getUserMedia);
+router.get("/tweets/single/:id", AuthRequired, getSigleTweet);
 
 export default router;
