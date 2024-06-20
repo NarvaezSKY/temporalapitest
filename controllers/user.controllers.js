@@ -109,7 +109,15 @@ export const verifyToken = async (req, res, next) => {
 export const profile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
-    res.status(200).json(user);
+    res.status(200).json({
+      id: user._id,
+      name: user.name,
+      lastName: user.lastName,
+      username: user.username,
+      email: user.email,
+      image: user.image,
+      token: token,
+    });
   } catch (error) {
     res.status(404).json({ error });
   }
