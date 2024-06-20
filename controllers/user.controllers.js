@@ -116,7 +116,6 @@ export const profile = async (req, res) => {
       username: user.username,
       email: user.email,
       image: user.image,
-      token: token,
     });
   } catch (error) {
     res.status(404).json({ error });
